@@ -14,3 +14,16 @@ jobs:
 
       - name: Simple quality check (list files)
         run: ls -la
+
+      - name: Create report file
+        run: |
+          echo "Pipeline report" > report.txt
+          echo "Branch: ${{ github.head_ref }}" >> report.txt
+          echo "PR: ${{ github.event.pull_request.html_url }}" >> report.txt
+          echo "Date: $(date)" >> report.txt
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-report
+          path: report.txt
