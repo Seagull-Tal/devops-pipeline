@@ -1,0 +1,16 @@
+name: DevOps Pipeline
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Simple quality check (list files)
+        run: ls -la
