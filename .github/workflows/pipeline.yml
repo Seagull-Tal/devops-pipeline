@@ -31,5 +31,5 @@ jobs:
       - name: Send Telegram notification
         run: |
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -d text="✅ Pipeline success! Project=devops-pipeline | Branch=${{ github.head_ref }} | PR=${{ github.event.pull_request.html_url }} | Time=$(date)"
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            --data-urlencode "text=✅ Pipeline success! Project=devops-pipeline | Branch=${{ github.head_ref }} | PR=${{ github.event.pull_request.html_url }} | Time=$(date)"
