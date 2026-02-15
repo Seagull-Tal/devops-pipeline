@@ -1,0 +1,47 @@
+name: DevOps Pipeline
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Simple quality check (list files)
+        run: ls -la
+
+      - name: Create report file
+        run: |
+          echo "Pipeline report" > report.txt
+          echo "Branch: ${{ github.head_ref }}" >> report.txt
+          echo "PR: ${{ github.event.pull_request.html_url }}" >> report.txt
+          echo "Date: $(date)" >> report.txt
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-report
+          path: report.txt
+
+      - name: Send Telegram notification
+        run: |
+          MESSAGE=$(cat <<'EOF'
+          *Новый успешный запуск пайплайна*
+
+          Проект:   devops-pipeline
+          Владелец: Seagull-Tal
+          Ветка:    ${{ github.head_ref }}
+          PR:       ${{ github.event.pull_request.html_url }}
+          Дата:     $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          EOF
+          )
+
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d parse_mode=Markdown \
+            --data-urlencode "text=$MESSAGE"
